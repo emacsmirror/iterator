@@ -42,7 +42,8 @@
 
 ;;;###autoload
 (defun iterator:list (seq &optional cycle)
-  "Return an iterator from SEQ."
+  "Return an iterator from SEQ.
+When CYCLE arg is provided, make the iterator cycle infinitely."
   (let ((lis seq))
     (lambda ()
       (let ((elm (car lis)))
