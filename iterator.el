@@ -38,13 +38,15 @@ A simple replacement of CL `position'."
   (cl-loop for i in seq for index from 0
            when (funcall test i item) return index))
 
-(defun iterator:list (seq)
+(defun iterator:list (seq &optional cycle)
   "Return an iterator from SEQ."
   (let ((lis seq))
-     (lambda ()
-       (let ((elm (car lis)))
-         (setq lis (cdr lis))
-         elm))))
+    (lambda ()
+      (let ((elm (car lis)))
+        (setq lis (if cycle
+                      (or (cdr lis) seq)
+                    (cdr lis)))
+        elm))))
 
 (defun iterator:next (iterator)
   "Return next elm of ITERATOR."
@@ -69,11 +71,7 @@ A simple replacement of CL `position'."
 
 (defun iterator:circular (seq)
   "Infinite iteration on SEQ."
-  (let ((lis seq))
-     (lambda ()
-       (let ((elm (car lis)))
-         (setq lis (pcase lis (`(,_ . ,ll) (or ll seq))))
-         elm))))
+  (iterator:list seq 'cycle))
 
 (cl-defun iterator:sub-prec-circular (seq elm &key (test 'eq))
   "Infinite reverse iteration of SEQ starting at ELM."
